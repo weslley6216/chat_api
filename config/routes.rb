@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  get "/teste", to: "teste#index"
+  resources :users, only: %i[ create ]
 end
