@@ -15,9 +15,10 @@ group :development, :test do
   gem "factory_bot_rails", "~> 6.4", ">= 6.4.4"
   gem "rspec-rails", "~> 7.1", ">= 7.1.1"
   gem "rubocop-rails-omakase", require: false
-  gem "shoulda-matchers", "~> 6.4"
 end
 
 group :test do
+  gem "database_cleaner", "~> 2.1"
+  gem "shoulda-matchers", "~> 6.4"
   gem "simplecov", require: false
 end
