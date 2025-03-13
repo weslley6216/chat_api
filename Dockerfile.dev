@@ -1,15 +1,33 @@
 FROM ruby:3.4.2
 
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
+# Install system dependencies
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
 
+# Create a non-root user
+ARG UID=1000
+ARG GID=1000
+RUN groupadd -g $GID appuser && \
+    useradd -m -u $UID -g $GID -s /bin/bash appuser
+
+# Create the application directory and set permissions
+RUN mkdir -p /opt/app && chown -R appuser:appuser /opt/app
+
+# Set the working directory
 WORKDIR /opt/app
 
-COPY Gemfile Gemfile.lock ./
-
+# Copy Gemfile first to optimize caching and install dependencies
+COPY --chown=appuser:appuser Gemfile Gemfile.lock ./
+USER appuser
 RUN bundle install
 
-COPY . .
+# Copy the remaining application code while ensuring correct ownership
+COPY --chown=appuser:appuser . .
 
+# Set appropriate write permissions
+RUN chmod -R 775 /opt/app
+
+# Expose the Rails server port
 EXPOSE 3000
 
+# Default command to start the Rails server
 CMD ["rails", "server", "-b", "0.0.0.0"]
