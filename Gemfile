@@ -12,5 +12,12 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "factory_bot_rails", "~> 6.4", ">= 6.4.4"
+  gem "rspec-rails", "~> 7.1", ">= 7.1.1"
   gem "rubocop-rails-omakase", require: false
+  gem "shoulda-matchers", "~> 6.4"
+end
+
+group :test do
+  gem "simplecov", require: false
 end
