@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_13_204234) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_13_210144) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.bigint "sender_id", null: false
+    t.bigint "receiver_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiver_id"], name: "index_messages_on_receiver_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "username"
@@ -20,4 +30,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_204234) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "messages", "users", column: "receiver_id"
+  add_foreign_key "messages", "users", column: "sender_id"
 end
