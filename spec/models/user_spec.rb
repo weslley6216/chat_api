@@ -21,4 +21,9 @@ describe User, type: :model do
       end
     end
   end
+
+  context 'associations' do
+    it { should have_many(:conversations_as_user_a).class_name(Conversation) }
+    it { should have_many(:conversations_as_user_b).class_name(Conversation) }
+  end
 end
