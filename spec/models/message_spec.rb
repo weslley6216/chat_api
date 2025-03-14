@@ -1,38 +1,44 @@
 require 'rails_helper'
 
-RSpec.describe Message, type: :model do
+describe Message, type: :model do
   context 'validations' do
     it { should validate_presence_of(:content) }
-    it { should validate_presence_of(:sender) }
-    it { should validate_presence_of(:receiver) }
   end
 
   context 'associations' do
-    it { should belong_to(:sender).class_name('User') }
-    it { should belong_to(:receiver).class_name('User') }
+    it { should belong_to(:sender).class_name(User) }
+    it { should belong_to(:receiver).class_name(User) }
+    it { should belong_to(:conversation) }
   end
 
   context 'when creating a message' do
-    let(:sender) { FactoryBot.create(:user, username: 'sender_user', email: 'sender@example.com') }
-    let(:receiver) { FactoryBot.create(:user, username: 'receiver_user', email: 'receiver@example.com') }
+    let(:sender) { create(:user, username: 'sender_user', email: 'sender@example.com') }
+    let(:receiver) { create(:user, username: 'receiver_user', email: 'receiver@example.com') }
+    let(:conversation) { create(:conversation, user_a: sender, user_b: receiver) }
 
     it 'is valid with valid attributes' do
-      message = FactoryBot.build(:message, sender: sender, receiver: receiver)
+      message = build(:message, sender: sender, receiver: receiver, conversation: conversation, content: 'Hello')
       expect(message).to be_valid
     end
 
     it 'is invalid without a content' do
-      message = FactoryBot.build(:message, content: nil, sender: sender, receiver: receiver)
+      message = build(:message, content: nil, sender: sender, receiver: receiver, conversation: conversation)
       expect(message).not_to be_valid
+      expect(message.errors[:content]).to include("can't be blank")
     end
 
     it 'is invalid without a sender' do
-      message = FactoryBot.build(:message, sender: nil, receiver: receiver)
+      message = build(:message, sender: nil, receiver: receiver, conversation: conversation)
       expect(message).not_to be_valid
     end
 
     it 'is invalid without a receiver' do
-      message = FactoryBot.build(:message, sender: sender, receiver: nil)
+      message = build(:message, sender: sender, receiver: nil, conversation: conversation)
+      expect(message).not_to be_valid
+    end
+
+    it 'is invalid without a conversation' do
+      message = build(:message, sender: sender, receiver: receiver, conversation: nil)
       expect(message).not_to be_valid
     end
   end
