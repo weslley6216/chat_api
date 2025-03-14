@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_13_210144) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_14_185127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "user_a_id"
+    t.bigint "user_b_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_a_id"], name: "index_conversations_on_user_a_id"
+    t.index ["user_b_id"], name: "index_conversations_on_user_b_id"
+  end
 
   create_table "messages", force: :cascade do |t|
     t.text "content"
@@ -20,6 +29,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_210144) do
     t.bigint "receiver_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "conversation_id", null: false
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
     t.index ["receiver_id"], name: "index_messages_on_receiver_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
@@ -31,6 +42,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_210144) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "conversations", "users", column: "user_a_id"
+  add_foreign_key "conversations", "users", column: "user_b_id"
+  add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users", column: "receiver_id"
   add_foreign_key "messages", "users", column: "sender_id"
 end
