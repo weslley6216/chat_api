@@ -4,6 +4,7 @@ gem 'rails', '~> 8.0.1'
 
 gem 'bootsnap', require: false
 gem 'pg', '~> 1.5', '>= 1.5.9'
+gem 'ostruct'
 gem 'puma', '>= 5.0'
 gem 'rack-cors', require: 'rack/cors'
 gem 'thruster', require: false
