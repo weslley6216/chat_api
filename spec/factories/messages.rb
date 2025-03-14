@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :message do
-    content { "Test message content" }
+    content { 'Sample content' }
     sender { create(:user) }
     receiver { create(:user) }
+    conversation
   end
 end
