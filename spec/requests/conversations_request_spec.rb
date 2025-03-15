@@ -8,7 +8,7 @@ describe 'Conversations API', type: :request do
 
   describe 'GET /conversations' do
     it 'returns all conversations' do
-      create_list(:conversation, 3)
+      create_list(:conversation, 3, user_a: user_a)
 
       get conversations_path, headers: auth_headers
 

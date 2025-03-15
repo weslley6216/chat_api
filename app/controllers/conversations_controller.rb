@@ -2,7 +2,8 @@ class ConversationsController < ApplicationController
   before_action :set_conversation, only: %i[show destroy]
 
   def index
-    @conversations = Conversation.all
+    @conversations = Conversation.where(user_a: @current_user)
+                                 .or(Conversation.where(user_b: @current_user))
     render json: @conversations
   end
 

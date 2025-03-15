@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+  before_action :authenticate_user!
+
   def authenticate_user!
     token = request.headers['Authorization']&.split(' ')&.last
     decoded = AuthenticationService.decode(token)
@@ -9,6 +11,4 @@ class ApplicationController < ActionController::API
       render json: { error: 'Unauthorized' }, status: :unauthorized
     end
   end
-
-  before_action :authenticate_user!
 end

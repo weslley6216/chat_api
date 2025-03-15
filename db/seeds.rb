@@ -1,7 +1,7 @@
 puts 'Criando usuários...'
-user_a = User.create!(username: 'Alice', email: 'alice@example.com')
-user_b = User.create!(username: 'Bob', email: 'bob@example.com')
-user_c = User.create!(username: 'Charlie', email: 'charlie@example.com')
+user_a = User.create!(username: 'alice', email: 'alice@example.com', password: '123456')
+user_b = User.create!(username: 'bob', email: 'bob@example.com', password: '123456')
+user_c = User.create!(username: 'charlie', email: 'charlie@example.com', password: '123456')
 
 puts 'Criando conversas...'
 conversation1 = Conversation.create!(user_a: user_a, user_b: user_b)

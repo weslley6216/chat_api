@@ -1,10 +1,10 @@
 class MessagesController < ApplicationController
-  before_action :set_conversation, only: %i[index create update destroy]
+  before_action :set_conversation
   before_action :set_message, only: %i[update destroy]
+  before_action :authorize_conversation!
 
   def index
-    @messages = @conversation.messages
-    render json: @messages
+    render json: @conversation.messages
   end
 
   def create
@@ -38,5 +38,11 @@ class MessagesController < ApplicationController
 
   def message_params
     params.require(:message).permit(:content, :sender_id, :receiver_id)
+  end
+
+  def authorize_conversation!
+    if [ @conversation.user_a, @conversation.user_b ].exclude?(@current_user)
+      render json: { error: 'Forbidden' }, status: :forbidden
+    end
   end
 end
