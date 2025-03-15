@@ -9,28 +9,23 @@ ARG GID=1000
 RUN groupadd -g $GID appuser && \
     useradd -m -u $UID -g $GID -s /bin/bash appuser
 
-# Create the application directory and set permissions
-RUN mkdir -p /opt/app && chown -R appuser:appuser /opt/app
-
 # Set the working directory
 WORKDIR /opt/app
 
-# Copy Gemfile first to optimize caching and install dependencies
+# Copy application dependency files (Gemfile) and install gems
 COPY --chown=appuser:appuser Gemfile Gemfile.lock ./
 USER appuser
 RUN bundle install
 
-# Copy the remaining application code while ensuring correct ownership
+# Copy the application code
 COPY --chown=appuser:appuser . .
 
+# Copy the entrypoint script and ensure it's executable
 COPY --chown=appuser:appuser entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh
-
-# Set appropriate write permissions
-RUN chmod -R 775 /opt/app
 
 # Expose the Rails server port
 EXPOSE 3000
 
-# Runs the entrypoint script to set up the environment and start the Rails server
-CMD ["sh", "/usr/bin/entrypoint.sh"]
+# Use the entrypoint script to initialize and start the application
+ENTRYPOINT ["sh", "/usr/bin/entrypoint.sh"]
