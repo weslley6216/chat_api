@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe 'Messages', type: :request do
+  let(:auth_headers) { auth_token_header(user_a) }
   let(:user_a) { create(:user) }
   let(:user_b) { create(:user) }
   let(:conversation) { create(:conversation, user_a: user_a, user_b: user_b) }
@@ -12,7 +13,7 @@ describe 'Messages', type: :request do
       create(:message, conversation: conversation, sender: user_a, content: 'Hello')
       create(:message, conversation: conversation, receiver: user_b, content: 'Hi')
 
-      get conversation_messages_path(conversation)
+      get conversation_messages_path(conversation), headers: auth_headers
 
       expect(response).to have_http_status(:ok)
       expect(parsed_json.length).to eq(2)
@@ -23,14 +24,18 @@ describe 'Messages', type: :request do
 
   describe 'POST /conversations/:conversation_id/messages' do
     it 'creates a new message' do
-      post conversation_messages_path(conversation), params: { message: message_params }
+      post conversation_messages_path(conversation),
+           params: { message: message_params },
+           headers: auth_headers
 
       expect(response).to have_http_status(:created)
       expect(parsed_json[:content]).to eq('Hello')
     end
 
     it 'returns error if message is invalid' do
-      post conversation_messages_path(conversation), params: { message: { content: nil } }
+      post conversation_messages_path(conversation),
+           params: { message: { content: nil } },
+           headers: auth_headers
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
@@ -38,7 +43,9 @@ describe 'Messages', type: :request do
 
   describe 'PATCH /conversations/:conversation_id/messages/:id' do
     it 'updates an existing message' do
-      patch conversation_message_path(conversation, message), params: { message: { content: 'Updated' } }
+      patch conversation_message_path(conversation, message),
+            params: { message: { content: 'Updated' } },
+            headers: auth_headers
 
       expect(response).to have_http_status(:ok)
       expect(parsed_json[:content]).to eq('Updated')
@@ -47,7 +54,7 @@ describe 'Messages', type: :request do
 
   describe 'DELETE /conversations/:conversation_id/messages/:id' do
     it 'deletes a message' do
-      delete conversation_message_path(conversation, message)
+      delete conversation_message_path(conversation, message), headers: auth_headers
 
       expect(response).to have_http_status(:no_content)
       expect { message.reload }.to raise_error(ActiveRecord::RecordNotFound)
