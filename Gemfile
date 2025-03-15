@@ -2,9 +2,11 @@ source 'https://rubygems.org'
 
 gem 'rails', '~> 8.0.1'
 
+gem 'bcrypt', '~> 3.1', '>= 3.1.20'
 gem 'bootsnap', require: false
-gem 'pg', '~> 1.5', '>= 1.5.9'
+gem 'jwt', '~> 2.10', '>= 2.10.1'
 gem 'ostruct'
+gem 'pg', '~> 1.5', '>= 1.5.9'
 gem 'puma', '>= 5.0'
 gem 'rack-cors', require: 'rack/cors'
 gem 'thruster', require: false
