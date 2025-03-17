@@ -4,7 +4,8 @@ class ConversationsController < ApplicationController
   def index
     @conversations = Conversation.where(user_a: @current_user)
                                  .or(Conversation.where(user_b: @current_user))
-    render json: @conversations
+
+    render json: @conversations, each_serializer: ConversationSerializer, current_user: @current_user
   end
 
   def show
