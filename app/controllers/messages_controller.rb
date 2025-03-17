@@ -4,15 +4,15 @@ class MessagesController < ApplicationController
   before_action :authorize_conversation!
 
   def index
-    render json: @conversation.messages
+    render json: @conversation.messages, each_serializer: MessageSerializer
   end
 
   def create
-    @message = @conversation.messages.new(message_params)
+    message = MessageBuilderService.new(@conversation, @current_user, message_params).build_message
 
-    return render json: @message, status: :created if @message.save
+    return render json: message, status: :created if message.save
 
-    render json: @message.errors, status: :unprocessable_entity
+    render json: message.errors, status: :unprocessable_entity
   end
 
   def update
@@ -37,12 +37,12 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:content, :sender_id, :receiver_id)
+    params.require(:message).permit(:content)
   end
 
   def authorize_conversation!
-    if [ @conversation.user_a, @conversation.user_b ].exclude?(@current_user)
-      render json: { error: 'Forbidden' }, status: :forbidden
-    end
+    return if [ @conversation.user_a, @conversation.user_b ].include?(@current_user)
+
+    render json: { error: 'Forbidden' }, status: :forbidden
   end
 end
