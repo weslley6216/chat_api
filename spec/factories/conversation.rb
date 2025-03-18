@@ -9,5 +9,15 @@ FactoryBot.define do
         conversation.users << user
       end
     end
+
+    trait :with_messages do
+      transient do
+        messages_count { 1 }
+      end
+
+      after(:create) do |conversation, evaluator|
+        create_list(:message, evaluator.messages_count, conversation: conversation, sender: conversation.users.first)
+      end
+    end
   end
 end

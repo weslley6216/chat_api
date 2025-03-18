@@ -1,10 +1,24 @@
 class Conversation < ApplicationRecord
-  belongs_to :user_a, class_name: 'User', foreign_key: 'user_a_id'
-  belongs_to :user_b, class_name: 'User', foreign_key: 'user_b_id'
-  has_many :messages
+  has_many :conversation_users, dependent: :destroy
+  has_many :users, through: :conversation_users
+  has_many :messages, dependent: :destroy
 
   def display_name_for(user)
-    other_user = (user == user_a) ? user_b : user_a
-    other_user.username.capitalize
+    other_users = users.where.not(id: user.id)
+    other_users.map(&:username).join(', ').capitalize
   end
+
+  def broadcast_message(message)
+    users.each do |user|
+      ChatChannel.broadcast_to self, message: MessageSerializer.new(message).as_json
+    end
+  end
+
+  scope :ordered_by_last_message, ->(user_id) {
+    joins(:messages)
+      .joins(:conversation_users)
+      .where(conversation_users: { user_id: user_id })
+      .group('conversations.id')
+      .order('MAX(messages.created_at) DESC')
+  }
 end
