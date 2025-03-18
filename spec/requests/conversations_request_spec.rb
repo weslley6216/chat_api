@@ -72,7 +72,7 @@ describe 'Conversations API', type: :request do
     end
 
     it 'returns 403 if user is not in conversation' do
-      other_conversation = create(:conversation, users: [user_three, create(:user)])
+      other_conversation = create(:conversation, users: [ user_three, create(:user) ])
       delete conversation_path(other_conversation), headers: auth_headers
 
       expect(response).to have_http_status(:forbidden)

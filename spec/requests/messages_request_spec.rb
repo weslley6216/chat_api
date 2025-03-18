@@ -31,7 +31,7 @@ describe 'Messages', type: :request do
     end
 
     it 'returns 403 if user is not in conversation' do
-      conversation2 = create(:conversation, users: [create(:user), create(:user)])
+      conversation2 = create(:conversation, users: [ create(:user), create(:user) ])
       get conversation_messages_path(conversation2), headers: auth_headers
 
       expect(response).to have_http_status(:forbidden)
@@ -57,7 +57,7 @@ describe 'Messages', type: :request do
     end
 
     it 'returns 403 if user is not in conversation' do
-      conversation2 = create(:conversation, users: [create(:user), create(:user)])
+      conversation2 = create(:conversation, users: [ create(:user), create(:user) ])
       post conversation_messages_path(conversation2),
            params: { message: message_params },
            headers: auth_headers
@@ -77,7 +77,7 @@ describe 'Messages', type: :request do
     end
 
     it 'returns 403 if user is not in conversation' do
-      conversation2 = create(:conversation, users: [create(:user), create(:user)])
+      conversation2 = create(:conversation, users: [ create(:user), create(:user) ])
       message2 = create(:message, conversation: conversation2, sender: create(:user))
       patch conversation_message_path(conversation2, message2),
             params: { message: { content: 'Updated' } },
@@ -96,7 +96,7 @@ describe 'Messages', type: :request do
     end
 
     it 'returns 403 if user is not in conversation' do
-      conversation2 = create(:conversation, users: [create(:user), create(:user)])
+      conversation2 = create(:conversation, users: [ create(:user), create(:user) ])
       message2 = create(:message, conversation: conversation2, sender: create(:user))
       delete conversation_message_path(conversation2, message2), headers: auth_headers
 
