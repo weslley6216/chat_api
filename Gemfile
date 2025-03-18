@@ -10,7 +10,9 @@ gem 'ostruct'
 gem 'pg', '~> 1.5', '>= 1.5.9'
 gem 'puma', '>= 5.0'
 gem 'rack-cors', require: 'rack/cors'
+gem 'solid_cable'
 gem 'thruster', require: false
+gem 'turbo-rails'
 gem 'tzinfo-data', platforms: %i[ windows jruby ]
 
 group :development, :test do
