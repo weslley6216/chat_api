@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
+
   post 'login', to: 'authentication#login'
 
   resources :users, only: %i[ create ]
