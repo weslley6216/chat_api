@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Users', type: :request do
-  describe 'POST /users' do
+  context 'POST /users' do
     it 'creates a new user' do
       user_params = {
         username: 'john_doe',
@@ -99,6 +99,41 @@ describe 'Users', type: :request do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(parsed_json[:errors]).to include("Email can't be blank")
+    end
+  end
+
+  context 'GET /users' do
+    let(:auth_headers) { auth_token_header(user_one) }
+    let(:user_one) { create(:user) }
+
+    context 'when there are users' do
+      before { create_list(:user, 3) }
+
+      it 'returns a list of users' do
+        get '/users', headers: auth_headers
+
+        expect(JSON.parse(response.body).size).to eq(3)
+      end
+
+      it 'returns status code 200' do
+        get '/users', headers: auth_headers
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when there are no users' do
+      it 'returns an empty array' do
+        get '/users', headers: auth_headers
+
+        expect(JSON.parse(response.body)).to be_empty
+      end
+
+      it 'returns status code 200' do
+        get '/users', headers: auth_headers
+
+        expect(response).to have_http_status(:ok)
+      end
     end
   end
 end
