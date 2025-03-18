@@ -19,17 +19,6 @@ describe Conversation, type: :model do
     end
   end
 
-  context '#broadcast_message' do
-    it 'broadcasts the message to all users in the conversation' do
-      expect {
-        conversation.broadcast_message(message)
-      }.to have_broadcasted_to(conversation)
-        .from_channel(ChatChannel)
-        .exactly(conversation.users.count).times
-        .with(message: MessageSerializer.new(message).as_json)
-    end
-  end
-
   context '.ordered_by_last_message' do
     it 'orders conversations by the last message created_at' do
       conversation2 = create(:conversation, users: [ user_one, create(:user) ])

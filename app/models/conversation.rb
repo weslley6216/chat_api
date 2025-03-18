@@ -8,12 +8,6 @@ class Conversation < ApplicationRecord
     other_users.map(&:username).join(', ').capitalize
   end
 
-  def broadcast_message(message)
-    users.each do |user|
-      ChatChannel.broadcast_to self, message: MessageSerializer.new(message).as_json
-    end
-  end
-
   scope :ordered_by_last_message, ->(user_id) {
     joins(:messages)
       .joins(:conversation_users)
