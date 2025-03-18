@@ -6,15 +6,15 @@ describe Message, type: :model do
   end
 
   context 'associations' do
-    it { should belong_to(:sender).class_name(User) }
-    it { should belong_to(:receiver).class_name(User) }
+    it { should belong_to(:sender).class_name('User') }
+    it { should belong_to(:receiver).class_name('User') }
     it { should belong_to(:conversation) }
   end
 
   context 'when creating a message' do
     let(:sender) { create(:user, username: 'sender_user', email: 'sender@example.com') }
     let(:receiver) { create(:user, username: 'receiver_user', email: 'receiver@example.com') }
-    let(:conversation) { create(:conversation, user_a: sender, user_b: receiver) }
+    let(:conversation) { create(:conversation, users: [ sender, receiver ]) }
 
     it 'is valid with valid attributes' do
       message = build(:message, sender: sender, receiver: receiver, conversation: conversation, content: 'Hello')

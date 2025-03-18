@@ -15,8 +15,11 @@ class MessageBuilderService
   private
 
   def determine_sender_and_receiver
-    return [ @conversation.user_b, @conversation.user_a ] if @conversation.user_b == @current_user
+    sender = @current_user
+    receiver = @conversation.users.find { |user| user != sender }
 
-    [ @conversation.user_a, @conversation.user_b ]
+    return [ sender, receiver ] if receiver
+
+    [ nil, nil ]
   end
 end

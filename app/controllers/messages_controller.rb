@@ -10,7 +10,7 @@ class MessagesController < ApplicationController
   def create
     message = MessageBuilderService.new(@conversation, @current_user, message_params).build_message
 
-    return render json: message, status: :created if message.save
+    return render json: message, sereliazer: MessageSerializer, status: :created if message.save
 
     render json: message.errors, status: :unprocessable_entity
   end
@@ -41,7 +41,7 @@ class MessagesController < ApplicationController
   end
 
   def authorize_conversation!
-    return if [ @conversation.user_a, @conversation.user_b ].include?(@current_user)
+    return if @conversation.users.include?(@current_user)
 
     render json: { error: 'Forbidden' }, status: :forbidden
   end
