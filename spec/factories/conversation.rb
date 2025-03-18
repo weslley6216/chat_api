@@ -1,6 +1,13 @@
 FactoryBot.define do
   factory :conversation do
-    user_a { association :user }
-    user_b { association :user }
+    transient do
+      users { create_list(:user, 2) }
+    end
+
+    after(:create) do |conversation, evaluator|
+      evaluator.users.each do |user|
+        conversation.users << user
+      end
+    end
   end
 end
