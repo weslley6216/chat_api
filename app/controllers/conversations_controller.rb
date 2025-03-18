@@ -2,29 +2,38 @@ class ConversationsController < ApplicationController
   before_action :set_conversation, only: %i[show destroy]
 
   def index
-    @conversations = Conversation.where(user_a: @current_user)
-                                 .or(Conversation.where(user_b: @current_user))
+    @conversations = Conversation.ordered_by_last_message(@current_user.id)
 
     render json: @conversations, each_serializer: ConversationSerializer, current_user: @current_user
   end
 
   def show
-    render json: @conversation
+    if @conversation.users.include?(@current_user)
+      render json: @conversation, serializer: ConversationSerializer, current_user: @current_user
+    else
+      render json: { error: 'Unauthorized' }, status: :forbidden
+    end
   end
 
   def create
-    @conversation = Conversation.new(conversation_params)
+    @conversation = Conversation.new
+    @conversation.conversation_users.build(user: @current_user)
+    @conversation.conversation_users.build(user: User.find_by(id: conversation_params[:user_id]))
 
     if @conversation.save
-      render json: @conversation, status: :created
+      render json: @conversation, serializer: ConversationSerializer, current_user: @current_user, status: :created
     else
       render json: @conversation.errors, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @conversation.destroy
-    head :no_content
+    if @conversation.users.include?(@current_user)
+      @conversation.destroy
+      head :no_content
+    else
+      render json: { error: 'Unauthorized' }, status: :forbidden
+    end
   end
 
   private
@@ -34,6 +43,6 @@ class ConversationsController < ApplicationController
   end
 
   def conversation_params
-    params.require(:conversation).permit(:user_a_id, :user_b_id)
+    params.require(:conversation).permit(:user_id)
   end
 end

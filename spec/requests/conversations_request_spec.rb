@@ -1,14 +1,15 @@
 require 'rails_helper'
 
 describe 'Conversations API', type: :request do
-  let(:auth_headers) { auth_token_header(user_a) }
-  let(:user_a) { create(:user) }
-  let(:user_b) { create(:user) }
-  let(:conversation) { create(:conversation, user_a: user_a, user_b: user_b) }
+  let(:auth_headers) { auth_token_header(user_one) }
+  let(:user_one) { create(:user) }
+  let(:user_two) { create(:user) }
+  let(:user_three) { create(:user) }
+  let(:conversation) { create(:conversation, users: [ user_one, user_two ]) }
 
-  describe 'GET /conversations' do
+  context 'GET /conversations' do
     it 'returns all conversations' do
-      create_list(:conversation, 3, user_a: user_a)
+      create_list(:conversation, 3, :with_messages, users: [ user_one, create(:user) ])
 
       get conversations_path, headers: auth_headers
 
@@ -17,8 +18,10 @@ describe 'Conversations API', type: :request do
     end
   end
 
-  describe 'GET /conversations/:id' do
+  context 'GET /conversations/:id' do
     it 'returns a specific conversation' do
+      conversation = create(:conversation, users: [ user_one, create(:user) ])
+
       get conversation_path(conversation), headers: auth_headers
 
       expect(response).to have_http_status(:ok)
@@ -30,10 +33,17 @@ describe 'Conversations API', type: :request do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it 'returns 403 if user is not in conversation' do
+      other_conversation = create(:conversation, users: [ user_three, create(:user) ])
+      get conversation_path(other_conversation), headers: auth_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
-  describe 'POST /conversations' do
-    let(:conversation_params) { { user_a_id: user_a.id, user_b_id: user_b.id } }
+  context 'POST /conversations' do
+    let(:conversation_params) { { user_id: user_two.id } }
 
     it 'creates a new conversation' do
       post conversations_path,
@@ -41,25 +51,31 @@ describe 'Conversations API', type: :request do
            headers: auth_headers
 
       expect(response).to have_http_status(:created)
-      expect(parsed_json[:user_a_id]).to eq(user_a.id)
-      expect(parsed_json[:user_b_id]).to eq(user_b.id)
+      expect(Conversation.last.users).to include(user_one, user_two)
     end
 
     it 'returns error if parameters are invalid' do
       post conversations_path,
-           params: { conversation: { user_a_id: nil, user_b_id: nil } },
+           params: { conversation: { user_id: nil } },
            headers: auth_headers
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 
-  describe 'DELETE /conversations/:id' do
+  context 'DELETE /conversations/:id' do
     it 'deletes a conversation' do
       delete conversation_path(conversation), headers: auth_headers
 
       expect(response).to have_http_status(:no_content)
       expect { conversation.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'returns 403 if user is not in conversation' do
+      other_conversation = create(:conversation, users: [user_three, create(:user)])
+      delete conversation_path(other_conversation), headers: auth_headers
+
+      expect(response).to have_http_status(:forbidden)
     end
   end
 end
