@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe User, type: :model do
   context 'validations' do
     it { should validate_presence_of(:username) }
@@ -24,7 +26,24 @@ describe User, type: :model do
   end
 
   context 'associations' do
-    it { should have_many(:conversations_as_user_a).class_name(Conversation) }
-    it { should have_many(:conversations_as_user_b).class_name(Conversation) }
+    it { should have_many(:conversation_users) }
+    it { should have_many(:conversations).through(:conversation_users) }
+    it { should have_many(:messages).with_foreign_key('sender_id') }
+  end
+
+  context 'has_secure_password' do
+    let(:user) { create(:user, password: 'password', password_confirmation: 'password') }
+
+    it 'encrypts the password' do
+      expect(user.password_digest).not_to be_nil
+    end
+
+    it 'authenticates with the correct password' do
+      expect(user.authenticate('password')).to eq(user)
+    end
+
+    it 'does not authenticate with an incorrect password' do
+      expect(user.authenticate('wrong_password')).to be_falsey
+    end
   end
 end
