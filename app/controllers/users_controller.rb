@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[create]
 
   def index
-    users = User.where.not(id: @current_user.id)
+    users = User.without_conversations_with(@current_user.id)
     render json: users, each_serializer: UserSerializer
   end
 

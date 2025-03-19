@@ -9,10 +9,10 @@ class Conversation < ApplicationRecord
   end
 
   scope :ordered_by_last_message, ->(user_id) {
-    joins(:messages)
-      .joins(:conversation_users)
+    joins(:conversation_users)
       .where(conversation_users: { user_id: user_id })
+      .left_outer_joins(:messages)
       .group('conversations.id')
-      .order('MAX(messages.created_at) DESC')
+      .order('MAX(messages.created_at) DESC NULLS LAST')
   }
 end

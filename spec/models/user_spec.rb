@@ -46,4 +46,28 @@ describe User, type: :model do
       expect(user.authenticate('wrong_password')).to be_falsey
     end
   end
+
+  context 'scope :without_conversations_with' do
+    let(:user_one) { create(:user) }
+    let(:user_two) { create(:user) }
+    let(:user_three) { create(:user) }
+
+    before do
+      create(:conversation, users: [ user_one, user_two ])
+      create(:conversation, users: [ user_two, user_three ])
+    end
+
+    it 'returns users without conversations with the provided user' do
+      users = User.without_conversations_with(user_one.id)
+
+      expect(users).to include(user_three)
+      expect(users).not_to include(user_two)
+    end
+
+    it 'does not return the provided user in the query' do
+      users = User.without_conversations_with(user_one.id)
+
+      expect(users).not_to include(user_one)
+    end
+  end
 end
