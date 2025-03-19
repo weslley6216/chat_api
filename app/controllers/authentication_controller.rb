@@ -5,7 +5,7 @@ class AuthenticationController < ApplicationController
     user = User.where('email = ? OR username = ?', params[:email], params[:username]).first
 
     if user&.authenticate(params[:password])
-      token = AuthenticationService.encode(user_id: user.id)
+      token = AuthenticationService.encode({ user_id: user.id })
       render json: { token: token, user: UserSerializer.new(user) }, status: :ok
     else
       render json: { error: 'Invalid email, username or password' }, status: :unauthorized
