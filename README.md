@@ -1,24 +1,20 @@
-# README
+# Chat Web API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+API RESTful para a aplicação de chat em tempo real.
 
-Things you may want to cover:
+## Funcionalidades
 
-* Ruby version
+* Gerenciamento de usuários (`/users`)
+* Gerenciamento de conversas (`/conversations`)
+* Gerenciamento de mensagens (`/messages`)
+* Autenticação via JWT (`/login`)
+* Comunicação em tempo real via WebSockets (Action Cable)
 
-* System dependencies
+## Tecnologias
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* Ruby 3.4.2
+* Rails 8.0.1
+* RSpec
+* PostgreSQL
+* Action Cable
+* Solid Cable
