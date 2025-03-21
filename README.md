@@ -31,7 +31,7 @@ API RESTful para a aplicação de chat em tempo real.
 | `/conversations`          | GET    | Retorna a lista de todas as conversas do usuário. |
 | `/conversations/:id`      | GET    | Retorna uma conversa específica.                |
 | `/conversations`          | POST   | Cria uma nova conversa.                            |
-| `/messages?conversation_id=:id` | GET    | Retorna a lista de mensagens de uma conversa.   |
+| `/conversations/:conversation_id/messages` | GET    | Retorna a lista de mensagens de uma conversa.   |
 | `/messages`              | POST   | Cria uma nova mensagem.                           |
 | `/login`                  | POST   | Autentica um usuário e retorna um token JWT.       |
 
