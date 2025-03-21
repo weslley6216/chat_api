@@ -17,7 +17,7 @@ class User < ApplicationRecord
                                                   .joins(:users)
                                                   .distinct
                                                   .pluck('users.id')
-  
+
     where.not(id: existing_conversation_user_ids).where.not(id: user_id)
   }
 end
