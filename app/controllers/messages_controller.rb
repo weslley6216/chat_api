@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
   before_action :authorize_conversation!
 
   def index
-    render json: @conversation.messages, each_serializer: MessageSerializer
+    render json: @conversation.messages.includes(:sender, :receiver), each_serializer: MessageSerializer
   end
 
   def create
