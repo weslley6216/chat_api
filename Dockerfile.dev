@@ -1,24 +1,24 @@
 FROM ruby:3.4.2
 
-# Install system dependencies
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
-
-# Create a non-root user
-ARG UID=1000
-ARG GID=1000
-RUN groupadd -g $GID appuser && \
-    useradd -m -u $UID -g $GID -s /bin/bash appuser
-
 # Set the working directory
 WORKDIR /opt/app
 
-# Copy application dependency files (Gemfile) and install gems
+# Install system dependencies
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
+
+# Create a non-root user and group
+RUN useradd -m -d /app -s /bin/bash appuser && \
+    chown -R appuser:appuser /app
+
+# Copy Gemfile and Gemfile.lock first for caching
 COPY --chown=appuser:appuser Gemfile Gemfile.lock ./
-USER appuser
-RUN bundle install
+RUN gem install bundler && bundle install
 
 # Copy the application code
 COPY --chown=appuser:appuser . .
+
+# Set appuser
+USER appuser
 
 # Copy the entrypoint script and ensure it's executable
 COPY --chown=appuser:appuser entrypoint.sh /usr/bin/entrypoint.sh
@@ -28,4 +28,4 @@ RUN chmod +x /usr/bin/entrypoint.sh
 EXPOSE 3000
 
 # Use the entrypoint script to initialize and start the application
-ENTRYPOINT ["sh", "/usr/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
