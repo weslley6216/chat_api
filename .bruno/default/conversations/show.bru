@@ -1,0 +1,19 @@
+meta {
+  name: show
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/conversations/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 
+}
+
+settings {
+  encodeUrl: true
+}

@@ -7,26 +7,7 @@ meta {
 post {
   url: {{base_url}}/login
   body: json
-  auth: oauth2
-}
-
-auth:oauth2 {
-  grant_type: authorization_code
-  callback_url: 
-  authorization_url: 
-  access_token_url: 
-  refresh_token_url: 
-  client_id: 
-  client_secret: 
-  scope: 
-  state: 
-  pkce: false
-  credentials_placement: body
-  credentials_id: credentials
-  token_placement: header
-  token_header_prefix: Bearer
-  auto_fetch_token: true
-  auto_refresh_token: false
+  auth: none
 }
 
 body:json {
@@ -43,11 +24,6 @@ vars:pre-request {
 
 vars:post-response {
   auth_token: res.body.token
-}
-
-tests {
-  
-  
 }
 
 settings {
