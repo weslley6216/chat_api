@@ -26,6 +26,6 @@ end
 
 group :test do
   gem 'database_cleaner', '~> 2.1'
-  gem 'shoulda-matchers', '~> 6.4'
+  gem 'shoulda-matchers', '~> 6.5'
   gem 'simplecov', require: false
 end
